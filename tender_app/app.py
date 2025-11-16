@@ -21,7 +21,7 @@ import time
 # -------------------------------------------------
 # Load environment variables
 # -------------------------------------------------
-load_dotenv()
+load_dotenv("secrets.env")
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
