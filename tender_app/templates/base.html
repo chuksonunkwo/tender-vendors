@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+  <title>African Oil &amp; Gas Tenders</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    nav a { margin-right: 12px; }
+    .page { margin-top: 20px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 6px 8px; font-size: 14px; }
+    th { background: #f0f0f0; }
+    .flash-ok { color: green; }
+    .flash-error { color: red; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="{{ url_for('home') }}">Home</a>
+    <a href="{{ url_for('vendors_page') }}">Vendors</a>
+    <a href="{{ url_for('tenders_page') }}">Tenders</a>
+
+    {% if user_email %}
+      <a href="{{ url_for('my_tenders') }}">My Tenders</a>
+      <a href="{{ url_for('subscribe') }}">Subscribe</a>
+      <span>Logged in as {{ user_email }}</span>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    {% else %}
+      <a href="{{ url_for('login') }}">Login</a>
+      <a href="{{ url_for('register') }}">Register</a>
+    {% endif %}
+
+    <a href="{{ url_for('admin_login') }}">Admin</a>
+  </nav>
+
+  <div class="page">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for cat, msg in messages %}
+          <p class="flash-{{ cat }}">{{ msg }}</p>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>
