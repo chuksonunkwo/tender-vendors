@@ -1,102 +1,151 @@
+# tender_app/scrapers/nipex.py
+
+import datetime as dt
+import re
+from typing import Dict, List
+
 import requests
-from bs4 import BeautifulSoup
-from .base import normalize_tender
-
-# NipeX public "Current Opportunities" (WordPress site)
-BASE_LIST_URL = "https://nipexmain2.nipex-ng.com/Opportunity/"
-SOURCE_NAME = "NipeX"
+from bs4 import BeautifulSoup  # pip install beautifulsoup4
 
 
-def _fetch_html(url: str) -> str | None:
-    try:
-        resp = requests.get(url, timeout=20)
-        resp.raise_for_status()
-        return resp.text
-    except Exception as e:
-        print(f"[scraper:nipex] error fetching {url}: {e}")
+NipexTender = Dict[str, object]
+
+NIPEX_URL = (
+    "https://nipexmain2.nipex-ng.com/supplier-notice/current-opportunities/"
+)
+
+
+def fetch_nipex_html() -> str:
+    """
+    Download the NipeX 'Current Opportunities' page HTML.
+    """
+    resp = requests.get(NIPEX_URL, timeout=30)
+    resp.raise_for_status()
+    return resp.text
+
+
+def _parse_deadline_text(text: str) -> dt.date | None:
+    """
+    Convert text like 'Deadline Date :  November 27th, 2025' into a date.
+    Handles 'st', 'nd', 'rd', 'th' suffixes.
+    """
+    # Extract part after 'Deadline Date :'
+    m = re.search(r"Deadline\s*Date\s*:\s*(.+)", text, flags=re.IGNORECASE)
+    if not m:
         return None
 
+    raw = m.group(1).strip()
+    # Remove ordinal suffixes (st, nd, rd, th)
+    raw = re.sub(r"(\d+)(st|nd|rd|th)", r"\1", raw, flags=re.IGNORECASE)
+    # Normalize spaces
+    raw = re.sub(r"\s+", " ", raw)
 
-def _parse_list_page(html: str) -> list[dict]:
-    """
-    Parse one NipeX 'Opportunity' list page and return a list of normalized tenders.
-    We only use the listing page (title + link + published date); closing date
-    will be added later when we start parsing detail pages.
-    """
-    soup = BeautifulSoup(html, "html.parser")
-    tenders: list[dict] = []
-
-    # Typical WordPress pattern: each post is an <article>
-    for article in soup.select("article"):
-        title_link = article.select_one("h2 a")
-        if not title_link:
+    for fmt in ("%B %d, %Y", "%d %B %Y", "%d %b %Y"):
+        try:
+            return dt.datetime.strptime(raw, fmt).date()
+        except ValueError:
             continue
 
-        title = (title_link.get_text() or "").strip()
-        href = title_link.get("href") or BASE_LIST_URL
+    return None
+
+
+def parse_nipex_tenders(html: str) -> List[NipexTender]:
+    """
+    Parse the NipeX 'Current Opportunities' page into a list of tender dicts.
+
+    We look for H2/H3 headings that have a following text node containing
+    'Deadline Date :'.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    tenders: List[NipexTender] = []
+
+    # All h2/h3 headings on the page
+    headings = soup.find_all(["h2", "h3"])
+
+    for h in headings:
+        title = h.get_text(strip=True)
         if not title:
             continue
 
-        # Try to get the published date (not the closing date)
-        pub_date = None
-        time_tag = article.select_one("time")
-        if time_tag:
-            # WordPress usually stores ISO date in datetime attribute
-            dt_attr = time_tag.get("datetime") or ""
-            text = (time_tag.get_text() or "").strip()
-            # Prefer the machine-readable datetime attribute if present
-            if dt_attr:
-                pub_date = dt_attr[:10]  # 'YYYY-MM-DD'
-            elif text:
-                pub_date = text  # fallback, free-text date
+        # Skip the main page title or unrelated headings
+        if "CURRENT OPPORTUNITIES" in title.upper():
+            continue
 
-        # Optional short description if available
-        desc_tag = article.select_one(".entry-summary, .entry-content p")
-        description = (desc_tag.get_text() or "").strip() if desc_tag else None
+        # Look ahead for a line containing 'Deadline Date'
+        deadline_node = h.find_next(string=re.compile("Deadline\\s*Date", re.IGNORECASE))
+        if not deadline_node:
+            # This heading may not be a tender entry
+            continue
 
-        # Build tender item; operator / closing_date will often be unknown from list page
-        tender = normalize_tender(
-            title=title,
-            country="Nigeria",
-            source=SOURCE_NAME,
-            link=href,
-            description=description,
-            operator=None,
-            closing_date=None,
-            external_id=href,  # use full URL as unique id for de-duplication
+        deadline_text = deadline_node.strip()
+        closing_date = _parse_deadline_text(deadline_text)
+
+        # Grab link if present (often same <a> as title)
+        link_tag = h.find("a")
+        link = (
+            link_tag.get("href")
+            if link_tag and link_tag.has_attr("href")
+            else NIPEX_URL
         )
-        # we can optionally stash publication date in description or extend schema later
-        tender["publication_date"] = pub_date
 
+        tender: NipexTender = {
+            "title": title,
+            "operator": None,  # Operator is not shown per-line on this page
+            "country": "Nigeria",
+            "source": "NipeX Current Opportunities",
+            "closing_date": closing_date.isoformat() if closing_date else None,
+            "link": link,
+        }
         tenders.append(tender)
 
     return tenders
 
 
-def scrape_nipex(max_pages: int = 3) -> list[dict]:
+def upsert_tenders_to_supabase(supabase, tenders: List[NipexTender]) -> int:
     """
-    Scrape NipeX 'Current Opportunities' from the first `max_pages` of the
-    WordPress listing.
+    Insert tenders into the 'tenders' table.
 
-    max_pages=3 means:
-      - https://nipexmain2.nipex-ng.com/Opportunity/
-      - https://nipexmain2.nipex-ng.com/Opportunity/page/2/
-      - https://nipexmain2.nipex-ng.com/Opportunity/page/3/
+    For now we use plain INSERT (no ON CONFLICT) to avoid needing
+    a unique constraint. Running the scraper multiple times may create
+    duplicates until you add a proper UNIQUE index and switch to upsert.
     """
-    all_tenders: list[dict] = []
+    if not tenders:
+        return 0
 
-    # Page 1 has no "page/1" in the URL
-    first_html = _fetch_html(BASE_LIST_URL)
-    if first_html:
-        all_tenders.extend(_parse_list_page(first_html))
+    now = dt.datetime.utcnow().isoformat()
+    payload: List[dict] = []
 
-    # Remaining pages
-    for page in range(2, max_pages + 1):
-        url = f"{BASE_LIST_URL}page/{page}/"
-        html = _fetch_html(url)
-        if not html:
-            continue
-        all_tenders.extend(_parse_list_page(html))
+    for t in tenders:
+        item = dict(t)
+        item["updated_at"] = now
+        if "created_at" not in item:
+            item["created_at"] = now
+        payload.append(item)
 
-    print(f"[scraper:nipex] collected {len(all_tenders)} items from {max_pages} page(s).")
-    return all_tenders
+    resp = supabase.table("tenders").insert(payload).execute()
+    data = getattr(resp, "data", None) or []
+    return len(data)
+
+
+def run_nipex_scraper(supabase) -> int:
+    """Run the Nipex scraper end-to-end: fetch page, parse tenders, insert into Supabase."""
+    try:
+        html = fetch_nipex_html()
+    except Exception as e:
+        print(f"[nipex] fetch error: {e}")
+        return 0
+
+    try:
+        tenders = parse_nipex_tenders(html)
+    except Exception as e:
+        print(f"[nipex] parse error: {e}")
+        return 0
+
+    try:
+        inserted = upsert_tenders_to_supabase(supabase, tenders)
+        print(f"[nipex] upserted {inserted} tenders")
+        return inserted
+    except Exception as e:
+        print(f"[nipex] upsert error: {e}")
+        return 0
+

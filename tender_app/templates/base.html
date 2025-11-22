@@ -1,334 +1,380 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>{% block title %}TenderVendors · African Oil &amp; Gas Tenders{% endblock %}</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <title>TenderVendors{% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Bootstrap 5 -->
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNly12RbqV0vJkRkDzhkRk2N9K"
-    crossorigin="anonymous"
-  >
+    <!-- Bootstrap 5 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNly12bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    >
 
-  <!-- Bootstrap Icons (optional, for nav icons) -->
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-  >
+    <style>
+        :root {
+            --tv-primary: #4f46e5;
+            --tv-primary-soft: #eef2ff;
+            --tv-bg: #f3f4f6;
+            --tv-sidebar-bg: #111827;
+            --tv-sidebar-width: 230px;
+        }
 
-  <style>
-    :root {
-      --tv-primary: #4f46e5;
-      --tv-primary-soft: #eef2ff;
-      --tv-bg: #f3f4f6;
-      --tv-sidebar-width: 230px;
-    }
+        * {
+            box-sizing: border-box;
+        }
 
-    body {
-      background: var(--tv-bg);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      min-height: 100vh;
-    }
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                sans-serif;
+            background: var(--tv-bg);
+            color: #111827;
+        }
 
-    .tv-shell {
-      min-height: 100vh;
-      display: flex;
-    }
+        /* App shell */
+        .tv-shell {
+            min-height: 100vh;
+            display: flex;
+        }
 
-    .tv-sidebar {
-      width: var(--tv-sidebar-width);
-      background: #111827;
-      color: #e5e7eb;
-      display: flex;
-      flex-direction: column;
-      padding: 18px 14px;
-    }
+        .tv-sidebar {
+            width: var(--tv-sidebar-width);
+            background: var(--tv-sidebar-bg);
+            color: #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            padding: 18px 14px;
+        }
 
-    .tv-sidebar-brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 26px;
-    }
+        .tv-sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px 18px 10px;
+        }
 
-    .tv-sidebar-logo {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #4f46e5, #3b82f6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 600;
-      font-size: 18px;
-    }
+        .tv-sidebar-logo {
+            width: 28px;
+            height: 28px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #4f46e5, #22c55e);
+        }
 
-    .tv-sidebar-title {
-      font-size: 18px;
-      font-weight: 600;
-    }
+        .tv-sidebar-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
 
-    .tv-sidebar-subtitle {
-      font-size: 11px;
-      color: #9ca3af;
-      margin-top: -3px;
-    }
+        .tv-sidebar-sub {
+            font-size: 11px;
+            color: #9ca3af;
+        }
 
-    .tv-nav-section-title {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #6b7280;
-      margin: 10px 0 6px;
-      padding-left: 4px;
-    }
+        .tv-nav {
+            margin-top: 8px;
+            flex: 1;
+        }
 
-    .tv-nav-link {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 10px;
-      border-radius: 10px;
-      color: #e5e7eb;
-      text-decoration: none;
-      font-size: 14px;
-      margin-bottom: 4px;
-    }
+        .tv-nav-section-label {
+            font-size: 11px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #6b7280;
+            margin: 12px 8px 4px;
+        }
 
-    .tv-nav-link:hover {
-      background: #1f2937;
-      color: #ffffff;
-      text-decoration: none;
-    }
+        .tv-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            margin: 2px 4px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            color: #e5e7eb;
+        }
 
-    .tv-nav-link i {
-      font-size: 16px;
-      color: #9ca3af;
-    }
+        .tv-nav-link:hover {
+            background: #1f2937;
+            text-decoration: none;
+        }
 
-    .tv-nav-link-active {
-      background: #1d4ed8;
-      color: #ffffff;
-    }
+        .tv-nav-link span.tv-nav-icon {
+            font-size: 15px;
+        }
 
-    .tv-nav-link-active i {
-      color: #bfdbfe;
-    }
+        .tv-nav-link-active {
+            background: rgba(79, 70, 229, 0.18);
+            color: #e5e7eb;
+        }
 
-    .tv-sidebar-footer {
-      margin-top: auto;
-      font-size: 12px;
-      color: #6b7280;
-      padding-top: 12px;
-      border-top: 1px solid #1f2937;
-    }
+        .tv-sidebar-footer {
+            font-size: 11px;
+            color: #6b7280;
+            padding: 6px 8px 0 8px;
+        }
 
-    .tv-main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
+        /* Main area */
+        .tv-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
 
-    .tv-topbar {
-      height: 64px;
-      background: #ffffff;
-      border-bottom: 1px solid #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 24px;
-    }
+        .tv-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+        }
 
-    .tv-topbar-title {
-      display: flex;
-      flex-direction: column;
-    }
+        .tv-topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-    .tv-topbar-title h1 {
-      font-size: 18px;
-      font-weight: 600;
-      margin: 0;
-    }
+        .tv-top-search {
+            width: 260px;
+            max-width: 60vw;
+        }
 
-    .tv-topbar-title span {
-      font-size: 13px;
-      color: #6b7280;
-    }
+        .tv-topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
 
-    .tv-topbar-user {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      color: #4b5563;
-    }
+        .tv-user-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            display: inline-block;
+            margin-right: 4px;
+        }
 
-    .tv-topbar-user-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: #10b981;
-    }
+        .tv-top-link {
+            text-decoration: none;
+            color: #4f46e5;
+            font-size: 14px;
+        }
 
-    .tv-main-body {
-      padding: 20px 24px 28px;
-    }
+        .tv-top-link:hover {
+            text-decoration: underline;
+        }
 
-    .tv-content-card {
-      background: #ffffff;
-      border-radius: 16px;
-      padding: 18px 18px 20px;
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
-    }
+        .tv-content {
+            padding: 20px 22px 28px 22px;
+        }
 
-    .flash-ok {
-      color: #16a34a;
-      font-size: 14px;
-    }
+        .tv-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 18px 18px 16px;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+            border: 1px solid #e5e7eb;
+        }
 
-    .flash-error {
-      color: #dc2626;
-      font-size: 14px;
-    }
+        .tv-metric-card {
+            border-radius: 16px;
+            padding: 14px 16px;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+        }
 
-    @media (max-width: 992px) {
-      .tv-shell {
-        flex-direction: column;
-      }
-      .tv-sidebar {
-        width: 100%;
-        flex-direction: row;
-        align-items: center;
-        padding: 10px 12px;
-        overflow-x: auto;
-      }
-      .tv-sidebar-brand {
-        margin-bottom: 0;
-        margin-right: 12px;
-      }
-      .tv-nav-section-title,
-      .tv-sidebar-footer {
-        display: none;
-      }
-      .tv-main {
-        min-height: calc(100vh - 64px);
-      }
-    }
-  </style>
+        .tv-metric-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6b7280;
+        }
+
+        .tv-metric-value {
+            font-size: 22px;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .tv-metric-sub {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .tv-page-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .tv-page-subtitle {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .tv-flashes {
+            margin-bottom: 10px;
+        }
+
+        .tv-flash {
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .tv-flash-ok {
+            background: #ecfdf3;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .tv-flash-error {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        @media (max-width: 900px) {
+            .tv-shell {
+                flex-direction: column;
+            }
+            .tv-sidebar {
+                width: 100%;
+                flex-direction: row;
+                align-items: center;
+                gap: 10px;
+                padding: 10px 12px;
+                overflow-x: auto;
+            }
+            .tv-nav {
+                display: flex;
+                flex-direction: row;
+                margin-top: 0;
+            }
+            .tv-nav-section-label,
+            .tv-sidebar-footer {
+                display: none;
+            }
+            .tv-main {
+                min-height: calc(100vh - 60px);
+            }
+        }
+    </style>
 </head>
-
 <body>
+
 <div class="tv-shell">
+    <!-- Sidebar -->
+    <aside class="tv-sidebar">
+        <div class="tv-sidebar-brand">
+            <div class="tv-sidebar-logo"></div>
+            <div>
+                <div class="tv-sidebar-title">TenderVendors</div>
+                <div class="tv-sidebar-sub">Public Tender Listings</div>
+            </div>
+        </div>
 
-  <!-- Sidebar -->
-  <aside class="tv-sidebar">
-    <div class="tv-sidebar-brand">
-      <div class="tv-sidebar-logo">TV</div>
-      <div>
-        <div class="tv-sidebar-title">TenderVendors</div>
-        <div class="tv-sidebar-subtitle">African Oil &amp; Gas Tenders</div>
-      </div>
+        <nav class="tv-nav">
+            <div class="tv-nav-section-label">Browse</div>
+            <a href="{{ url_for('home') }}" class="tv-nav-link{% if request.endpoint == 'home' %} tv-nav-link-active{% endif %}">
+                <span class="tv-nav-icon">🏠</span>
+                <span>Overview</span>
+            </a>
+            <a href="{{ url_for('tenders_page') }}" class="tv-nav-link{% if request.endpoint == 'tenders_page' %} tv-nav-link-active{% endif %}">
+                <span class="tv-nav-icon">📄</span>
+                <span>Browse Tenders</span>
+            </a>
+            <a href="{{ url_for('vendors_page') }}" class="tv-nav-link{% if request.endpoint == 'vendors_page' %} tv-nav-link-active{% endif %}">
+                <span class="tv-nav-icon">🏢</span>
+                <span>Vendors</span>
+            </a>
+
+                        <div class="tv-nav-section-label">My workspace</div>
+
+            {% if user_email %}
+            <a href="{{ url_for('my_tenders') }}"
+               class="tv-nav-link{% if request.endpoint == 'my_tenders' %} tv-nav-link-active{% endif %}">
+                <span class="tv-nav-icon">♥</span>
+                <span>My Saved Tenders</span>
+            </a>
+            {% endif %}
+
+            <a href="{{ url_for('subscribe') }}"
+               class="tv-nav-link{% if request.endpoint == 'subscribe' %} tv-nav-link-active{% endif %}">
+                <span class="tv-nav-icon">💳</span>
+                <span>Subscription</span>
+            </a>
+
+
+            {% if session.get('is_admin') %}
+            <div class="tv-nav-section-label">Admin</div>
+            <a href="{{ url_for('admin_dashboard') }}" class="tv-nav-link{% if request.endpoint.startswith('admin_') %} tv-nav-link-active{% endif %}">
+                <span class="tv-nav-icon">⚙</span>
+                <span>Admin</span>
+            </a>
+            {% endif %}
+        </nav>
+
+        <div class="tv-sidebar-footer">
+            © {{ 2024 }} TenderVendors
+        </div>
+    </aside>
+
+    <!-- Main area -->
+    <div class="tv-main">
+        <header class="tv-topbar">
+            <div class="tv-topbar-left">
+                <input
+                    class="form-control form-control-sm tv-top-search"
+                    type="search"
+                    placeholder="Quick search (coming soon)…"
+                    disabled
+                >
+            </div>
+            <div class="tv-topbar-right">
+                {% if user_email %}
+                    <span><span class="tv-user-dot"></span>{{ user_email }}</span>
+                    <a class="tv-top-link" href="{{ url_for('logout') }}">Logout</a>
+                {% else %}
+                    <a class="tv-top-link" href="{{ url_for('login') }}">Login</a>
+                    <a class="tv-top-link" href="{{ url_for('register') }}">Register</a>
+                {% endif %}
+            </div>
+        </header>
+
+        <main class="tv-content">
+            <!-- Flash messages -->
+            <div class="tv-flashes">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="tv-flash tv-flash-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+
+            <!-- Page-specific content -->
+            <div class="tv-card">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
     </div>
-
-    <div class="flex-grow-1">
-      <div class="tv-nav-section-title">Browse</div>
-      <a class="tv-nav-link {% if request.endpoint == 'home' %}tv-nav-link-active{% endif %}"
-         href="{{ url_for('home') }}">
-        <i class="bi bi-grid-1x2-fill"></i>
-        <span>Dashboard</span>
-      </a>
-      <a class="tv-nav-link {% if request.endpoint == 'tenders_page' %}tv-nav-link-active{% endif %}"
-         href="{{ url_for('tenders_page') }}">
-        <i class="bi bi-file-earmark-text"></i>
-        <span>Tenders</span>
-      </a>
-      <a class="tv-nav-link {% if request.endpoint == 'vendors_page' %}tv-nav-link-active{% endif %}"
-         href="{{ url_for('vendors_page') }}">
-        <i class="bi bi-buildings"></i>
-        <span>Vendors</span>
-      </a>
-
-      <div class="tv-nav-section-title">My workspace</div>
-      <a class="tv-nav-link {% if request.endpoint == 'my_tenders' %}tv-nav-link-active{% endif %}"
-         href="{{ url_for('my_tenders') }}">
-        <i class="bi bi-heart"></i>
-        <span>My Saved Tenders</span>
-      </a>
-      <a class="tv-nav-link {% if request.endpoint == 'subscribe' %}tv-nav-link-active{% endif %}"
-         href="{{ url_for('subscribe') }}">
-        <i class="bi bi-credit-card"></i>
-        <span>Subscription</span>
-      </a>
-
-      <div class="tv-nav-section-title">Admin</div>
-      <a class="tv-nav-link {% if request.endpoint.startswith('admin_') %}tv-nav-link-active{% endif %}"
-         href="{{ url_for('admin_login') }}">
-        <i class="bi bi-shield-lock"></i>
-        <span>Admin</span>
-      </a>
-    </div>
-
-    <div class="tv-sidebar-footer">
-      <div>© {{ 2024 }} TenderVendors</div>
-      <div>Internal prototype – not for public use.</div>
-    </div>
-  </aside>
-
-  <!-- Main area -->
-  <div class="tv-main">
-
-    <!-- Top bar -->
-    <header class="tv-topbar">
-      <div class="tv-topbar-title">
-        <h1>{% block page_title %}TenderVendors{% endblock %}</h1>
-        <span>{% block page_subtitle %}Discover, track, and save African oil &amp; gas tenders.{% endblock %}</span>
-      </div>
-      <div class="tv-topbar-user">
-        {% if user_email %}
-          <span class="tv-topbar-user-dot"></span>
-          <span>{{ user_email }}</span>
-          <a href="{{ url_for('logout') }}" class="btn btn-outline-secondary btn-sm">Logout</a>
-        {% else %}
-          <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-sm">Login</a>
-          <a href="{{ url_for('register') }}" class="btn btn-primary btn-sm">Register</a>
-        {% endif %}
-      </div>
-    </header>
-
-    <!-- Body -->
-    <main class="tv-main-body">
-      <!-- Flash messages -->
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          <div class="mb-3">
-            {% for cat, msg in messages %}
-              <div class="small {% if cat == 'error' %}flash-error{% else %}flash-ok{% endif %}">
-                {{ msg }}
-              </div>
-            {% endfor %}
-          </div>
-        {% endif %}
-      {% endwith %}
-
-      <!-- Page content -->
-      <div class="tv-content-card">
-        {% block content %}{% endblock %}
-      </div>
-    </main>
-
-  </div>
 </div>
 
-<!-- Bootstrap JS (optional, for dropdowns etc.) -->
-<script
-  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-  crossorigin="anonymous"
-></script>
+<!-- Bootstrap JS (optional) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXC5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 </body>
 </html>
