@@ -1,380 +1,78 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>TenderVendors{% block title %}{% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Bootstrap 5 -->
+  <head>
+    <meta charset="utf-8" />
+    <title>{% block title %}African Oil &amp; Gas Tenders{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNly12bRjXh0JMhjY6hW+ALEwIH"
-      crossorigin="anonymous"
-    >
-
-    <style>
-        :root {
-            --tv-primary: #4f46e5;
-            --tv-primary-soft: #eef2ff;
-            --tv-bg: #f3f4f6;
-            --tv-sidebar-bg: #111827;
-            --tv-sidebar-width: 230px;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-                sans-serif;
-            background: var(--tv-bg);
-            color: #111827;
-        }
-
-        /* App shell */
-        .tv-shell {
-            min-height: 100vh;
-            display: flex;
-        }
-
-        .tv-sidebar {
-            width: var(--tv-sidebar-width);
-            background: var(--tv-sidebar-bg);
-            color: #e5e7eb;
-            display: flex;
-            flex-direction: column;
-            padding: 18px 14px;
-        }
-
-        .tv-sidebar-brand {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 10px 18px 10px;
-        }
-
-        .tv-sidebar-logo {
-            width: 28px;
-            height: 28px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #4f46e5, #22c55e);
-        }
-
-        .tv-sidebar-title {
-            font-weight: 600;
-            font-size: 18px;
-        }
-
-        .tv-sidebar-sub {
-            font-size: 11px;
-            color: #9ca3af;
-        }
-
-        .tv-nav {
-            margin-top: 8px;
-            flex: 1;
-        }
-
-        .tv-nav-section-label {
-            font-size: 11px;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            color: #6b7280;
-            margin: 12px 8px 4px;
-        }
-
-        .tv-nav-link {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 10px;
-            margin: 2px 4px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 14px;
-            color: #e5e7eb;
-        }
-
-        .tv-nav-link:hover {
-            background: #1f2937;
-            text-decoration: none;
-        }
-
-        .tv-nav-link span.tv-nav-icon {
-            font-size: 15px;
-        }
-
-        .tv-nav-link-active {
-            background: rgba(79, 70, 229, 0.18);
-            color: #e5e7eb;
-        }
-
-        .tv-sidebar-footer {
-            font-size: 11px;
-            color: #6b7280;
-            padding: 6px 8px 0 8px;
-        }
-
-        /* Main area */
-        .tv-main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .tv-topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 20px;
-            background: #ffffff;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .tv-topbar-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .tv-top-search {
-            width: 260px;
-            max-width: 60vw;
-        }
-
-        .tv-topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 14px;
-        }
-
-        .tv-user-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #22c55e;
-            display: inline-block;
-            margin-right: 4px;
-        }
-
-        .tv-top-link {
-            text-decoration: none;
-            color: #4f46e5;
-            font-size: 14px;
-        }
-
-        .tv-top-link:hover {
-            text-decoration: underline;
-        }
-
-        .tv-content {
-            padding: 20px 22px 28px 22px;
-        }
-
-        .tv-card {
-            background: #ffffff;
-            border-radius: 18px;
-            padding: 18px 18px 16px;
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
-            border: 1px solid #e5e7eb;
-        }
-
-        .tv-metric-card {
-            border-radius: 16px;
-            padding: 14px 16px;
-            background: #ffffff;
-            border: 1px solid #e5e7eb;
-        }
-
-        .tv-metric-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: #6b7280;
-        }
-
-        .tv-metric-value {
-            font-size: 22px;
-            font-weight: 600;
-            margin-top: 2px;
-        }
-
-        .tv-metric-sub {
-            font-size: 12px;
-            color: #9ca3af;
-        }
-
-        .tv-page-title {
-            font-size: 22px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .tv-page-subtitle {
-            font-size: 13px;
-            color: #6b7280;
-        }
-
-        .tv-flashes {
-            margin-bottom: 10px;
-        }
-
-        .tv-flash {
-            padding: 8px 12px;
-            border-radius: 10px;
-            font-size: 13px;
-            margin-bottom: 6px;
-        }
-
-        .tv-flash-ok {
-            background: #ecfdf3;
-            color: #166534;
-            border: 1px solid #bbf7d0;
-        }
-
-        .tv-flash-error {
-            background: #fef2f2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
-
-        @media (max-width: 900px) {
-            .tv-shell {
-                flex-direction: column;
-            }
-            .tv-sidebar {
-                width: 100%;
-                flex-direction: row;
-                align-items: center;
-                gap: 10px;
-                padding: 10px 12px;
-                overflow-x: auto;
-            }
-            .tv-nav {
-                display: flex;
-                flex-direction: row;
-                margin-top: 0;
-            }
-            .tv-nav-section-label,
-            .tv-sidebar-footer {
-                display: none;
-            }
-            .tv-main {
-                min-height: calc(100vh - 60px);
-            }
-        }
-    </style>
-</head>
-<body>
-
-<div class="tv-shell">
-    <!-- Sidebar -->
-    <aside class="tv-sidebar">
-        <div class="tv-sidebar-brand">
-            <div class="tv-sidebar-logo"></div>
-            <div>
-                <div class="tv-sidebar-title">TenderVendors</div>
-                <div class="tv-sidebar-sub">Public Tender Listings</div>
-            </div>
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('index') }}">
+          AO&G Tenders
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0"><li class="nav-item">
+              <a class="nav-link" href="{{ url_for('tenders_page') }}">Tenders</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('vendors_page') }}">Vendors</a>
+            </li>{% if session.get('user_id') %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('my_tenders') }}">My Saved</a>
+            </li>{% endif %}{% if session.get('is_admin') %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Admin</a>
+            </li>{% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('admin_login') }}">Admin Login</a>
+            </li>{% endif %}
+          </ul>
+          <ul class="navbar-nav ms-auto">{% if session.get('user_id') %}<li class="nav-item">
+              <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+            </li>{% elif session.get('is_admin') %}<li class="nav-item">
+              <a class="nav-link" href="{{ url_for('admin_logout') }}">Admin Logout</a>
+            </li>{% else %}<li class="nav-item">
+              <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+            </li>{% endif %}
+          </ul>
         </div>
+      </div>
+    </nav>
 
-        <nav class="tv-nav">
-            <div class="tv-nav-section-label">Browse</div>
-            <a href="{{ url_for('home') }}" class="tv-nav-link{% if request.endpoint == 'home' %} tv-nav-link-active{% endif %}">
-                <span class="tv-nav-icon">🏠</span>
-                <span>Overview</span>
-            </a>
-            <a href="{{ url_for('tenders_page') }}" class="tv-nav-link{% if request.endpoint == 'tenders_page' %} tv-nav-link-active{% endif %}">
-                <span class="tv-nav-icon">📄</span>
-                <span>Browse Tenders</span>
-            </a>
-            <a href="{{ url_for('vendors_page') }}" class="tv-nav-link{% if request.endpoint == 'vendors_page' %} tv-nav-link-active{% endif %}">
-                <span class="tv-nav-icon">🏢</span>
-                <span>Vendors</span>
-            </a>
+    <main class="py-3">
+      <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+      </div>
 
-                        <div class="tv-nav-section-label">My workspace</div>
+      {% block content %}{% endblock %}
+    </main>
 
-            {% if user_email %}
-            <a href="{{ url_for('my_tenders') }}"
-               class="tv-nav-link{% if request.endpoint == 'my_tenders' %} tv-nav-link-active{% endif %}">
-                <span class="tv-nav-icon">♥</span>
-                <span>My Saved Tenders</span>
-            </a>
-            {% endif %}
-
-            <a href="{{ url_for('subscribe') }}"
-               class="tv-nav-link{% if request.endpoint == 'subscribe' %} tv-nav-link-active{% endif %}">
-                <span class="tv-nav-icon">💳</span>
-                <span>Subscription</span>
-            </a>
-
-
-            {% if session.get('is_admin') %}
-            <div class="tv-nav-section-label">Admin</div>
-            <a href="{{ url_for('admin_dashboard') }}" class="tv-nav-link{% if request.endpoint.startswith('admin_') %} tv-nav-link-active{% endif %}">
-                <span class="tv-nav-icon">⚙</span>
-                <span>Admin</span>
-            </a>
-            {% endif %}
-        </nav>
-
-        <div class="tv-sidebar-footer">
-            © {{ 2024 }} TenderVendors
-        </div>
-    </aside>
-
-    <!-- Main area -->
-    <div class="tv-main">
-        <header class="tv-topbar">
-            <div class="tv-topbar-left">
-                <input
-                    class="form-control form-control-sm tv-top-search"
-                    type="search"
-                    placeholder="Quick search (coming soon)…"
-                    disabled
-                >
-            </div>
-            <div class="tv-topbar-right">
-                {% if user_email %}
-                    <span><span class="tv-user-dot"></span>{{ user_email }}</span>
-                    <a class="tv-top-link" href="{{ url_for('logout') }}">Logout</a>
-                {% else %}
-                    <a class="tv-top-link" href="{{ url_for('login') }}">Login</a>
-                    <a class="tv-top-link" href="{{ url_for('register') }}">Register</a>
-                {% endif %}
-            </div>
-        </header>
-
-        <main class="tv-content">
-            <!-- Flash messages -->
-            <div class="tv-flashes">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="tv-flash tv-flash-{{ category }}">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-            </div>
-
-            <!-- Page-specific content -->
-            <div class="tv-card">
-                {% block content %}{% endblock %}
-            </div>
-        </main>
-    </div>
-</div>
-
-<!-- Bootstrap JS (optional) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXC5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h1 class="h3 mb-3">African Oil &amp; Gas Tenders</h1>
+  <p class="lead">
+    Welcome to your tender dashboard. Use the navigation above to browse vendors,
+    view current tenders, and manage your saved opportunities.
+  </p>
+  <a href="{{ url_for('tenders_page') }}" class="btn btn-primary">
+    View Tenders
+  </a>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - African Oil & Gas Tenders{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1>Admin Dashboard</h1>
+  
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <a href="{{ url_for('admin_add_tender') }}" class="btn btn-primary">Add Tender</a>
+      <a href="{{ url_for('admin_add_vendor') }}" class="btn btn-primary">Add Vendor</a>
+    </div>
+  </div>
+  
+  <form action="{{ url_for('admin_sync_vendors_from_tenders') }}" method="post" class="mb-3">
+  <button type="submit" class="btn btn-sm btn-outline-primary">
+    Sync vendors from tenders
+  </button>
+</form>
+
+
+  <h2 class="mt-4">Recent Tenders</h2>
+  <div class="table-responsive">
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Country</th>
+          <th>Operator</th>
+          <th>Closing Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tender in tenders %}
+        <tr>
+          <td>{{ tender.title }}</td>
+          <td>{{ tender.country or '-' }}</td>
+          <td>{{ tender.operator or '-' }}</td>
+          <td>{{ tender.closing_date or '-' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+  <h2 class="mt-4">Vendors</h2>
+  <div class="table-responsive">
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Country</th>
+          <th>Website</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for vendor in vendors %}
+        <tr>
+          <td>{{ vendor.name }}</td>
+          <td>{{ vendor.country or '-' }}</td>
+          <td>{{ vendor.website or '-' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}{{ vendor.name }} – Vendor{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <a href="{{ url_for('vendors_page') }}" class="btn btn-sm btn-link px-0 mb-2">
+    &larr; Back to vendor list
+  </a>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <h1 class="h4 mb-2">{{ vendor.name }}</h1>
+      <p class="mb-1">
+        <span class="badge bg-secondary">{{ vendor.country }}</span>
+        {% if vendor.status %}
+          <span class="badge bg-success ms-1">{{ vendor.status }}</span>
+        {% endif %}
+      </p>
+      {% if vendor.source %}
+        <p class="text-muted small mb-0">
+          Source: {{ vendor.source }}
+        </p>
+      {% endif %}
+    </div>
+  </div>
+
+  <h2 class="h5 mb-3">Open Tenders</h2>
+
+  {% if not tenders %}
+    <div class="alert alert-info">
+      No tenders are currently linked to this vendor.
+    </div>
+  {% else %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+      {% for tender in tenders %}
+        <div class="col">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">{{ tender.title }}</h5>
+
+              <p class="card-text small text-muted mb-1">
+                {{ tender.operator or "Operator not specified" }}
+              </p>
+
+              <p class="card-text mb-1">
+                <span class="badge bg-secondary me-1">
+                  {{ tender.country or "N/A" }}
+                </span>
+                {% if tender.closing_date %}
+                  <span class="badge bg-warning text-dark">
+                    Closes: {{ tender.closing_date }}
+                  </span>
+                {% endif %}
+              </p>
+
+              {% if tender.link %}
+                <a href="{{ tender.link }}" target="_blank" rel="noopener"
+                   class="mt-auto btn btn-sm btn-outline-primary">
+                  View notice
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

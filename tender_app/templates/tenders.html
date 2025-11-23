@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Tenders{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Tenders</h1>
+
+    {% if user %}
+      {% if not is_subscribed %}
+        <a href="{{ url_for('subscribe') }}" class="btn btn-primary">
+          Subscribe to unlock full access
+        </a>
+      {% endif %}
+    {% else %}
+      <a href="{{ url_for('login') }}" class="btn btn-outline-primary">
+        Log in to subscribe
+      </a>
+    {% endif %}
+  </div>
+
+  {% if not tenders %}
+    <div class="alert alert-info">
+      No tenders are available at the moment. Please check back later.
+    </div>
+  {% else %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+      {% for tender in tenders %}
+        <div class="col">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">{{ tender.title }}</h5>
+
+              <p class="card-text small text-muted mb-1">
+                {{ tender.operator or "Operator not specified" }}
+              </p>
+
+              <p class="card-text mb-1">
+                <span class="badge bg-secondary me-1">
+                  {{ tender.country or "N/A" }}
+                </span>
+                {% if tender.closing_date %}
+                  <span class="badge bg-warning text-dark">
+                    Closes: {{ tender.closing_date }}
+                  </span>
+                {% endif %}
+              </p>
+
+              {% if tender.link %}
+                <a href="{{ tender.link }}" target="_blank" rel="noopener"
+                   class="mt-auto btn btn-sm btn-outline-primary">
+                  View notice
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if not is_subscribed and has_more %}
+      <div class="alert alert-warning mt-4">
+        You are seeing the latest <strong>10 tenders</strong>.
+        Subscribe to unlock all current and past tenders.
+        <a href="{{ url_for('subscribe') }}" class="btn btn-sm btn-primary ms-2">
+          Subscribe now
+        </a>
+      </div>
+    {% endif %}
+
+    {% if is_subscribed and show_pagination %}
+      <nav class="mt-4" aria-label="Tenders pagination">
+        <ul class="pagination">
+          <li class="page-item {% if current_page <= 1 %}disabled{% endif %}">
+            <a class="page-link"
+               href="{{ url_for('tenders_page', page=current_page-1) }}">
+              Previous
+            </a>
+          </li>
+
+          <li class="page-item active">
+            <span class="page-link">
+              Page {{ current_page }}
+            </span>
+          </li>
+
+          <li class="page-item {% if not has_more %}disabled{% endif %}">
+            <a class="page-link"
+               href="{{ url_for('tenders_page', page=current_page+1) }}">
+              Next
+            </a>
+          </li>
+        </ul>
+      </nav>
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

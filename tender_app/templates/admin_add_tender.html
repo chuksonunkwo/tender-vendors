@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Add Tender - Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1>Add Tender</h1>
+  
+  <form method="POST" class="mt-4">
+    <div class="mb-3">
+      <label for="title" class="form-label">Title *</label>
+      <input type="text" class="form-control" id="title" name="title" required>
+    </div>
+    <div class="mb-3">
+      <label for="country" class="form-label">Country</label>
+      <input type="text" class="form-control" id="country" name="country">
+    </div>
+    <div class="mb-3">
+      <label for="operator" class="form-label">Operator</label>
+      <input type="text" class="form-control" id="operator" name="operator">
+    </div>
+    <div class="mb-3">
+      <label for="closing_date" class="form-label">Closing Date</label>
+      <input type="date" class="form-control" id="closing_date" name="closing_date">
+    </div>
+    <div class="mb-3">
+      <label for="link" class="form-label">Link</label>
+      <input type="url" class="form-control" id="link" name="link">
+    </div>
+    <button type="submit" class="btn btn-primary">Add Tender</button>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}

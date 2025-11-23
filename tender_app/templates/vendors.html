@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Vendors{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Oil &amp; Gas Vendors</h1>
+    <span class="text-muted small">
+      {{ vendors|length }} vendor{{ vendors|length != 1 and 's' or '' }} available
+    </span>
+  </div>
+
+  {% if not vendors %}
+    <div class="alert alert-info">
+      No vendors have been created yet. Ask the admin to run
+      <strong>Sync vendors from tenders</strong> in the Admin dashboard.
+    </div>
+  {% else %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+      {% for vendor in vendors %}
+        <div class="col">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title mb-1">
+                <a href="{{ url_for('vendor_detail', vendor_id=vendor.id) }}" class="text-decoration-none">
+                  {{ vendor.name }}
+                </a>
+              </h5>
+              <p class="card-text mb-1">
+                <span class="badge bg-secondary">
+                  {{ vendor.country }}
+                </span>
+                {% if vendor.status %}
+                  <span class="badge bg-success ms-1">
+                    {{ vendor.status }}
+                  </span>
+                {% endif %}
+              </p>
+              {% if vendor.source %}
+                <p class="card-text small text-muted">
+                  Source: {{ vendor.source }}
+                </p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

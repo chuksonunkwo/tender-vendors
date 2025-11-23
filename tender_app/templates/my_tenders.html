@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}My Saved Tenders{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h1 class="h3 mb-3">My Saved Tenders</h1>
+
+  {% if not tenders %}
+    <div class="alert alert-info">
+      You have not saved any tenders yet.
+    </div>
+  {% else %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+      {% for tender in tenders %}
+        <div class="col">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">{{ tender.title }}</h5>
+
+              <p class="card-text small text-muted mb-1">
+                {{ tender.operator or "Operator not specified" }}
+              </p>
+
+              <p class="card-text mb-1">
+                <span class="badge bg-secondary me-1">
+                  {{ tender.country or "N/A" }}
+                </span>
+                {% if tender.closing_date %}
+                  <span class="badge bg-warning text-dark">
+                    Closes: {{ tender.closing_date }}
+                  </span>
+                {% endif %}
+              </p>
+
+              {% if tender.link %}
+                <a href="{{ tender.link }}" target="_blank" rel="noopener"
+                   class="mt-auto btn btn-sm btn-outline-primary">
+                  View notice
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
